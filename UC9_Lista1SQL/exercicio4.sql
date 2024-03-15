@@ -7,14 +7,14 @@ CREATE TABLE `alunos` (
   PRIMARY KEY (`id_aluno`),
   KEY `id_turma` (`id_turma`),
   CONSTRAINT `alunos_ibfk_1` FOREIGN KEY (`id_turma`) REFERENCES `turmas` (`id_turma`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 CREATE TABLE `disciplinas` (
   `id_disciplina` int NOT NULL AUTO_INCREMENT,
   `nome_disciplina` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id_disciplina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE `provas` (
   `id_aluno` int DEFAULT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `provas` (
   KEY `id_disciplina` (`id_disciplina`),
   CONSTRAINT `provas_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `alunos` (`id_aluno`),
   CONSTRAINT `provas_ibfk_2` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas` (`id_disciplina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 CREATE TABLE `turmas` (
@@ -36,4 +36,4 @@ CREATE TABLE `turmas` (
   PRIMARY KEY (`id_turma`),
   KEY `id_disciplina` (`id_disciplina`),
   CONSTRAINT `turmas_ibfk_1` FOREIGN KEY (`id_disciplina`) REFERENCES `disciplinas` (`id_disciplina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
