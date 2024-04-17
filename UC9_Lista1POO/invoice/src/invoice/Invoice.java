@@ -69,7 +69,7 @@ public class Invoice {
 
 
     public static void main(String[] args) {
-        Invoice compras = new Invoice(9, "Teste", 1, 10);
+        Invoice compras = new Invoice(9, "Teste", 2, 15.50);
         
         compras.exibir();
         
