@@ -47,14 +47,14 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
         txtPesquisaId = new javax.swing.JTextField();
         txtNome = new javax.swing.JTextField();
         txtSalario = new javax.swing.JTextField();
-        txtDataNascimento = new javax.swing.JTextField();
-        txtSexo = new javax.swing.JTextField();
         btnPesquisar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRegistros = new javax.swing.JTable();
         btnNovo = new javax.swing.JButton();
         btnAtualizar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
+        txtDataNascimento = new javax.swing.JFormattedTextField();
+        cmbSexo = new javax.swing.JComboBox<>();
 
         jLabel3.setText("jLabel3");
 
@@ -76,12 +76,6 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
         jLabel6.setText("data nascimento");
 
         jLabel7.setText("sexo");
-
-        txtSexo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSexoActionPerformed(evt);
-            }
-        });
 
         btnPesquisar.setText("Pesquisar");
         btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -129,6 +123,14 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
             }
         });
 
+        try {
+            txtDataNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        cmbSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Feminino", "Masculino" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -162,16 +164,16 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(btnPesquisar))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
-                                    .addComponent(btnNovo))
+                                .addComponent(btnNovo)
                                 .addGap(50, 50, 50)
                                 .addComponent(btnAtualizar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnExcluir)))))
+                                .addComponent(btnExcluir))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(34, 34, 34))
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
@@ -203,7 +205,7 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNovo)
@@ -217,10 +219,6 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSexoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSexoActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
@@ -246,12 +244,21 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
             double salario = Double.parseDouble(txtSalario.getText());
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date dataNascimento = new Date(sdf.parse(txtDataNascimento.getText()).getTime());
-            String sexo = txtSexo.getText();
+            
+            String sexo = cmbSexo.getSelectedItem().toString();
+            
+            char sexoAbreviado = ' ';
+            if(sexo.equals("Masculino")){
+                sexoAbreviado = 'M';
+            }else if(sexo.equals("Feminino")){
+                sexoAbreviado = 'F';
+            }
 
             pstmt.setString(1, nome);
             pstmt.setDouble(2, salario);
             pstmt.setDate(3, dataNascimento);
-            pstmt.setString(4, sexo);
+            //pstmt.setString(4, sexo);
+            pstmt.setString(4, String.valueOf(sexoAbreviado));
 
             pstmt.executeUpdate();
 
@@ -292,7 +299,17 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
                 String dataNascimentoFormatted = dateFormat.format(rs.getDate("datanascimento"));
                 txtDataNascimento.setText(dataNascimentoFormatted);
 
-                txtSexo.setText(rs.getString("sexo"));
+                //txtSexo.setText(rs.getString("sexo"));
+                String sexoAbreviado = rs.getString("sexo");
+                
+                String sexoLegivel = "";
+                if(sexoAbreviado.equals("M")){
+                    sexoLegivel = "Masculino";
+                }else if(sexoAbreviado.equals("F")){
+                    sexoLegivel = "Feminino";
+                }
+                
+                cmbSexo.setSelectedItem(sexoLegivel);
 
             } else {
                 // Se não houver resultado, exibir uma mensagem
@@ -324,13 +341,23 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
             double salario = Double.parseDouble(txtSalario.getText());
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date dataNascimento = new Date(sdf.parse(txtDataNascimento.getText()).getTime());
-            String sexo = txtSexo.getText();
+            //String sexo = txtSexo.getText();
+            String sexo = cmbSexo.getSelectedItem().toString();
+            
+            char sexoAbreviado = ' ';
+            if(sexo.equals("Masculino")){
+                sexoAbreviado = 'M';
+            }else if(sexo.equals("Feminino")){
+                sexoAbreviado = 'F';
+            }
+            
             int id = Integer.parseInt(txtPesquisaId.getText());
 
             pstmt.setString(1, nome);
             pstmt.setDouble(2, salario);
             pstmt.setDate(3, dataNascimento);
-            pstmt.setString(4, sexo);
+            //pstmt.setString(4, sexo);
+            pstmt.setString(4, String.valueOf(sexoAbreviado));
             pstmt.setInt(5, id);
 
             int linhasAfetadas = pstmt.executeUpdate();
@@ -453,6 +480,7 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnPesquisar;
+    private javax.swing.JComboBox<String> cmbSexo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -462,11 +490,10 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblRegistros;
-    private javax.swing.JTextField txtDataNascimento;
+    private javax.swing.JFormattedTextField txtDataNascimento;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtPesquisaId;
     private javax.swing.JTextField txtSalario;
-    private javax.swing.JTextField txtSexo;
     // End of variables declaration//GEN-END:variables
 
     private void exibirRegistros() throws SQLException {
@@ -512,6 +539,7 @@ public class frmCadastroPessoa extends javax.swing.JFrame {
         txtNome.setText("");
         txtSalario.setText("");
         txtDataNascimento.setText("");
-        txtSexo.setText("");
+        //txtSexo.setText("");
+        cmbSexo.setSelectedIndex(0);
     }
 }
