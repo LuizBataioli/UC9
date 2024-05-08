@@ -40,3 +40,6 @@ INSERT INTO tarefas (tarefa, dataCriacao, dataConclusao, dataVencimento, priorid
 ('Enviar relatório', '2024-05-05', NULL, '2024-05-08', 'Alta', 'Pendente', 'Relatório do trimestre'),
 ('Marcar reunião', '2024-05-04', NULL, '2024-05-09', 'Baixa', 'Pendente', 'Com equipe de projeto'),
 ('Consertar o vazamento', '2024-05-03', NULL, '2024-05-12', 'Alta', 'Pendente', 'Chamar encanador');
+
+INSERT INTO tarefas (tarefa, dataCriacao, dataConclusao, dataVencimento, prioridade, statuss, notas) VALUES
+('Teste inserçôes', '2024-05-07', '2024-05-08', '2024-05-10', 'Alta', 'Concluida', 'teste teste teste');
