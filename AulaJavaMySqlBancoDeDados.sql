@@ -2,6 +2,8 @@ CREATE DATABASE Turma_TDS231N;
 
 USE Turma_TDS231N;
 
+/*Tarefa cadastro pessoa:*/
+
 CREATE TABLE Pessoa (
 idPessoa INT AUTO_INCREMENT PRIMARY KEY,
 Nome VARCHAR(100),
@@ -23,6 +25,8 @@ INSERT INTO Pessoa (Nome, Salario, DataNascimento, Sexo) VALUES
 ('Fernando', 3300.80, '1975-10-22', 'M');
 
 
+/*Tarefa lista de tarefas:*/
+
 CREATE TABLE tarefas (
 idTarefa INT AUTO_INCREMENT PRIMARY KEY,
 tarefa VARCHAR(200),
@@ -43,3 +47,17 @@ INSERT INTO tarefas (tarefa, dataCriacao, dataConclusao, dataVencimento, priorid
 
 INSERT INTO tarefas (tarefa, dataCriacao, dataConclusao, dataVencimento, prioridade, statuss, notas) VALUES
 ('Teste inserçôes', '2024-05-07', '2024-05-08', '2024-05-10', 'Alta', 'Concluida', 'teste teste teste');
+
+
+/*Tarefa controle RH:*/
+
+CREATE TABLE Cargos (
+id INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100) NOT NULL,
+descricao TEXT
+)ENGINE=INNODB;
+
+INSERT INTO Cargos (nome, descricao) VALUES 
+('Desenvolvedor', 'Responsável por desenvolver e manter software'),
+('Analista de Sistemas', 'Responsável por analisar e projetar sistemas'),
+('Gerente de Projetos', 'Responsável por gerenciar projetos e equipes');
