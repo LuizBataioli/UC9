@@ -4,6 +4,7 @@ import controller.CargoController;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class frmCargoCadastro extends javax.swing.JFrame {
 
@@ -56,6 +57,11 @@ public class frmCargoCadastro extends javax.swing.JFrame {
         });
 
         btnCancelarCargo.setText("Cancelar");
+        btnCancelarCargo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarCargoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -133,16 +139,25 @@ public class frmCargoCadastro extends javax.swing.JFrame {
         try {
             //Passa as informações para o controller
             boolean sucesso = cargoController.addCargo(nome, descricao);
-            
+
             if (sucesso) {
                 this.dispose();
                 frmPesquisar.setVisible(true);
+                frmPesquisar.pesquisarCargos();
             }
-            
+
         } catch (SQLException ex) {
-            Logger.getLogger(frmCargoCadastro.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro ao adicionar o cargo:" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSalvarCargoActionPerformed
+
+    private void btnCancelarCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCargoActionPerformed
+        txtCargo.setText("");
+        txtDescricao.setText("");
+        this.dispose();
+        frmPesquisar.setVisible(true);
+        frmPesquisar.pesquisarCargos();
+    }//GEN-LAST:event_btnCancelarCargoActionPerformed
 
     /**
      * @param args the command line arguments

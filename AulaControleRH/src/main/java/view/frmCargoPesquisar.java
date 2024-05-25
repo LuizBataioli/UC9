@@ -1,20 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
-/**
- *
- * @author Luiz Bataioli
- */
+import controller.CargoController;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Cargo;
+
 public class frmCargoPesquisar extends javax.swing.JFrame {
 
-    /**
-     * Creates new form frmCargoPesquisar
-     */
+    private CargoController cargoController;
+
     public frmCargoPesquisar() {
         initComponents();
+        cargoController = new CargoController();
     }
 
     /**
@@ -47,6 +48,11 @@ public class frmCargoPesquisar extends javax.swing.JFrame {
         jLabel2.setText("Cargo:");
 
         btnPesquisarCargo.setText("Pesquisar");
+        btnPesquisarCargo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarCargoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,8 +126,18 @@ public class frmCargoPesquisar extends javax.swing.JFrame {
         });
 
         btnAlterarCargo.setText("Alterar");
+        btnAlterarCargo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarCargoActionPerformed(evt);
+            }
+        });
 
         btnExcluirCargo.setText("Excluir");
+        btnExcluirCargo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirCargoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -184,6 +200,50 @@ public class frmCargoPesquisar extends javax.swing.JFrame {
         cargoCadastroView.setVisible(true);
     }//GEN-LAST:event_btnNovoCargoActionPerformed
 
+    private void btnPesquisarCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarCargoActionPerformed
+        pesquisarCargos();
+    }//GEN-LAST:event_btnPesquisarCargoActionPerformed
+
+    private void btnAlterarCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarCargoActionPerformed
+
+        int selectedRow = tblCargos.getSelectedRow();
+        if (selectedRow != -1) {
+            int id = (int) tblCargos.getValueAt(selectedRow, 0);
+            String nome = (String) tblCargos.getValueAt(selectedRow, 1);
+            String descricao = (String) tblCargos.getValueAt(selectedRow, 2);
+
+            frmCargoAlterar frmAlterar = new frmCargoAlterar(this);
+            frmAlterar.setCargoData(id, nome, descricao);
+            this.setVisible(false);  // Oculta o formulário de pesquisa
+            frmAlterar.setVisible(true);  // Mostra o formulário de alteração
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um cargo para alterar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
+
+
+    }//GEN-LAST:event_btnAlterarCargoActionPerformed
+
+    private void btnExcluirCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirCargoActionPerformed
+
+        int selectedRow = tblCargos.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um cargo para excluir!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int cargoId = (int) tblCargos.getValueAt(selectedRow, 0);
+        int option = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir este cargo?", "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
+        if (option == JOptionPane.YES_OPTION) {
+            try {
+                cargoController.deleteCargo(cargoId);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao excluir o cargo: " + ex.getMessage());
+            }
+            pesquisarCargos();
+        }
+
+    }//GEN-LAST:event_btnExcluirCargoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -233,4 +293,21 @@ public class frmCargoPesquisar extends javax.swing.JFrame {
     private javax.swing.JTable tblCargos;
     private javax.swing.JTextField txtCargo;
     // End of variables declaration//GEN-END:variables
+
+    public void pesquisarCargos() {
+        //Feito em um método para poder atualizar a tabela nos botões Salvar e Cancelar da tela excluir
+        String nome = txtCargo.getText();
+
+        try {
+            List<Cargo> cargos = cargoController.searchCargosByName(nome);
+            DefaultTableModel model = (DefaultTableModel) tblCargos.getModel();
+            model.setRowCount(0);  // Limpa a tabela antes de adicionar os resultados
+
+            for (Cargo cargo : cargos) {
+                model.addRow(new Object[]{cargo.getId(), cargo.getNome(), cargo.getDescricao()});
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao pesquisar cargos: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

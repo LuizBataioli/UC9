@@ -4,17 +4,25 @@
  */
 package view;
 
+import controller.CargoController;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import model.Cargo;
+
 /**
  *
  * @author Luiz Bataioli
  */
 public class frmCargoAlterar extends javax.swing.JFrame {
 
-    /**
-     * Creates new form frmCargoAlterar
-     */
-    public frmCargoAlterar() {
+    private CargoController cargoController;
+    private int cargoId;
+    private frmCargoPesquisar frmPesquisar;
+
+    public frmCargoAlterar(frmCargoPesquisar frmPesquisar) {
         initComponents();
+        this.frmPesquisar = frmPesquisar;
+        this.cargoController = new CargoController();
     }
 
     /**
@@ -124,11 +132,33 @@ public class frmCargoAlterar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarCargoActionPerformed
-        // TODO add your handling code here:
+
+        this.frmPesquisar = frmPesquisar;
+        this.cargoController = new CargoController();
+        String nome = txtCargo.getText();
+        String descricao = txtDescricao.getText();
+
+        Cargo cargo = new Cargo();
+        cargo.setId(cargoId);  // Define o ID do cargo a ser alterado
+        cargo.setNome(nome);
+        cargo.setDescricao(descricao);
+
+        try {
+            cargoController.updateCargo(cargo);
+            JOptionPane.showMessageDialog(this, "Cargo atualizado com sucesso!");
+            this.dispose();
+            frmPesquisar.setVisible(true);  // Mostra o formulário de pesquisa novamente
+            frmPesquisar.pesquisarCargos(); // Chama o método de pesquisa automaticamente
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar o cargo: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_btnSalvarCargoActionPerformed
 
     private void btnCancelarCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCargoActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
+        frmPesquisar.setVisible(true);
+        frmPesquisar.pesquisarCargos();
     }//GEN-LAST:event_btnCancelarCargoActionPerformed
 
     /**
@@ -161,7 +191,7 @@ public class frmCargoAlterar extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmCargoAlterar().setVisible(true);
+                new frmCargoAlterar(new frmCargoPesquisar()).setVisible(true);
             }
         });
     }
@@ -176,4 +206,10 @@ public class frmCargoAlterar extends javax.swing.JFrame {
     private javax.swing.JTextField txtCargo;
     private javax.swing.JTextField txtDescricao;
     // End of variables declaration//GEN-END:variables
+
+    void setCargoData(int id, String nome, String descricao) {
+        cargoId = id;
+        txtCargo.setText(nome);
+        txtDescricao.setText(descricao);
+    }
 }
